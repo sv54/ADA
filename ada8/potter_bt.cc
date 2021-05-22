@@ -78,10 +78,10 @@ double weight(const vector<double>& w, const vector<unsigned>& m, const vector<u
 	return acc_w;
 }
 
-double value(const vector<double>& v, const vector<unsigned>& x) {
+double value(const vector<double>& v, const vector<unsigned>& m, const vector<unsigned>& x) {
 	double r = 0.0;
 	for (size_t i = 0; i < v.size(); i++) {
-		r += v[i] * x[i];
+		r += v[i] * x[i]*m[i];
 	}
 	return r;
 }
@@ -97,7 +97,7 @@ void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<dou
 	
 	if (k == x.size()) {
 		if (weight(w, m, x) <= W) {
-			best_v = max(best_v, value(v, x));
+			best_v = max(best_v, value(v,m, x));
 		}
 		return;
 	}
