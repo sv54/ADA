@@ -96,7 +96,7 @@ void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<dou
 	size_t k,vector<unsigned>&x, double& best_v) {
 	
 	if (k == x.size()) {
-		if (weight(w, x) <= W) {
+		if (weight(w, m, x) <= W) {
 			best_v = max(best_v, value(v, x));
 		}
 		return;
@@ -130,7 +130,7 @@ void feasiblerec(size_t k,
 	const vector<double>& w, double W,
 	vector<unsigned>& x) {
 	if (k == x.size()) {
-		if (weight(w, x) <= W) {
+		if (weight(w,m, x) <= W) {
 			for (unsigned i = 0; i < x.size(); i++) {
 				cout << x[i] << " ";
 			}
