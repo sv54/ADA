@@ -101,7 +101,7 @@ void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<dou
 		}
 		return;
 	}
-	for (unsigned j = 0; j < 2; j++) {
+	for (unsigned j = 0; j < m[k]; j++) {
 		x[k] = j;
 		knapsack(v,m, w, W, k + 1, x, best_v);
 	}
@@ -113,6 +113,10 @@ void knapsack(const vector<double>& v,const vector<unsigned>m, const vector<doub
 	double best_v = numeric_limits<double>::lowest();
 	knapsack(v,m, w, W, 0, x, best_v);
 	cout << "knapsack result: "<<best_v << endl;
+	/*cout << "copias result: ";
+	for (int i = 0; i < m.size(); i++)
+		cout << x[i]<<" ";
+	cout << endl;*/
 }
 
 void imprimir(double resul,double tiempo,const vector<int> copias) {
