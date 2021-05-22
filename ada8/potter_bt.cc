@@ -71,51 +71,50 @@ bool leerFichero(string nombre, int& n, double& T, vector<double>& t, vector<dou
 	return abierto;
 }
 
-double weight(const vector<double>& w, const vector<unsigned>& m, const vector<unsigned>& x) {
+double weight(const vector<double>& w, size_t k, const vector<unsigned>& x) {
 	double acc_w = 0.0;
-	for (size_t i = 0; i < w.size(); i++)
+	for (size_t i = 0; i < k; i++)
 		acc_w += x[i] * w[i];
 	return acc_w;
 }
 
-double value(const vector<double>& v, const vector<unsigned>& m, const vector<unsigned>& x) {
+double value(const vector<double>& v, const vector<unsigned>& x) {
 	double r = 0.0;
 	for (size_t i = 0; i < v.size(); i++) {
-		r += v[i] * x[i];//*m[i];
+		r += v[i] * x[i];
 	}
-	return r;
-}
-
-double tiempo(const vector<double> &t, size_t k, const vector<unsigned> &x) {
-	double r = 0.0;
-	for (size_t i = 0; i < k; i++) r = t[i] * x[i];
 	return r;
 }
 
 void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<double>&w, double W,
-	size_t k,vector<unsigned>&x, double& best_v, vector<unsigned>& sol) {
+	size_t k,vector<unsigned>&x, double& best_v, double& acc_w) {
 	
 	if (k == x.size()) {
-		if (weight(w, m, x) <= W) {
-			double actual_v = value(v, m, x);
+		best_v = max(best_v, value(v, x));
+		/*
+		if (weight(w, k, x) <= W) {
+			double actual_v = value(v, x);
 			if (actual_v > best_v) {
 				best_v = actual_v;
 				sol = x;
 			}
-		}
+		}*/ //si queremos saber la solucion
 		return;
 	}
 	for (unsigned j = 0; j < m[k]; j++) {
 		x[k] = j;
-		knapsack(v,m, w, W, k + 1, x, best_v,sol);
+		double present_w = acc_w + x[k] * w[k];
+		if (present_w<= W)
+			knapsack(v,m, w, W, k + 1, x, best_v, present_w);
 	}
 }
 
 void knapsack(const vector<double>& v,const vector<unsigned>m, const vector<double>& w, double W){
 	vector<unsigned>sol(v.size());
 	vector<unsigned> x(w.size());
+	double auxDouble = 0;
 	double best_v = numeric_limits<double>::lowest();
-	knapsack(v,m, w, W, 0, x, best_v ,sol);
+	knapsack(v,m, w, W, 0, x, best_v, auxDouble);
 	cout << "knapsack result: "<<best_v << endl;
 	
 	cout << "copias result: ";
@@ -132,14 +131,13 @@ void imprimir(double resul,double tiempo,const vector<int> copias) {
 	cout << tiempo;
 }
 
-
-
+/*
 void feasiblerec(size_t k,
 	const vector<unsigned> m,
 	const vector<double>& w, double W,
 	vector<unsigned>& x) {
 	if (k == x.size()) {
-		if (weight(w,m, x) <= W) {
+		if (weight(w, x) <= W) {
 			for (unsigned i = 0; i < x.size(); i++) {
 				cout << x[i] << " ";
 			}
@@ -162,11 +160,9 @@ void feasible(size_t n,
 }
 
 
-
+*/
 
 	
-
-
 //potter -f fichero entrada
 int main(int argc, char *argv[]){
 	string nombreFichero="";
