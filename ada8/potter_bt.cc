@@ -71,10 +71,10 @@ bool leerFichero(string nombre, int& n, double& T, vector<double>& t, vector<dou
 	return abierto;
 }
 
-double weight(const vector<double>& w, const vector<unsigned>& x) {
+double weight(const vector<double>& w, const vector<unsigned>& m, const vector<unsigned>& x) {
 	double acc_w = 0.0;
 	for (size_t i = 0; i < w.size(); i++)
-		acc_w += x[i] * w[i];
+		acc_w += x[i] * w[i]*m[i];
 	return acc_w;
 }
 
