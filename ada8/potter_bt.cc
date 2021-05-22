@@ -74,14 +74,14 @@ bool leerFichero(string nombre, int& n, double& T, vector<double>& t, vector<dou
 double weight(const vector<double>& w, const vector<unsigned>& m, const vector<unsigned>& x) {
 	double acc_w = 0.0;
 	for (size_t i = 0; i < w.size(); i++)
-		acc_w += x[i] * w[i]*m[i];
+		acc_w += x[i] * w[i];
 	return acc_w;
 }
 
 double value(const vector<double>& v, const vector<unsigned>& m, const vector<unsigned>& x) {
 	double r = 0.0;
 	for (size_t i = 0; i < v.size(); i++) {
-		r += v[i] * x[i]*m[i];
+		r += v[i] * x[i];//*m[i];
 	}
 	return r;
 }
@@ -93,30 +93,35 @@ double tiempo(const vector<double> &t, size_t k, const vector<unsigned> &x) {
 }
 
 void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<double>&w, double W,
-	size_t k,vector<unsigned>&x, double& best_v) {
+	size_t k,vector<unsigned>&x, double& best_v, vector<unsigned>& sol) {
 	
 	if (k == x.size()) {
 		if (weight(w, m, x) <= W) {
-			best_v = max(best_v, value(v,m, x));
+			double actual_v = value(v, m, x);
+			if (actual_v > best_v) {
+				best_v = actual_v;
+				sol = x;
+			}
 		}
 		return;
 	}
 	for (unsigned j = 0; j < m[k]; j++) {
 		x[k] = j;
-		knapsack(v,m, w, W, k + 1, x, best_v);
+		knapsack(v,m, w, W, k + 1, x, best_v,sol);
 	}
 }
 
 void knapsack(const vector<double>& v,const vector<unsigned>m, const vector<double>& w, double W){
-
+	vector<unsigned>sol(v.size());
 	vector<unsigned> x(w.size());
 	double best_v = numeric_limits<double>::lowest();
-	knapsack(v,m, w, W, 0, x, best_v);
+	knapsack(v,m, w, W, 0, x, best_v ,sol);
 	cout << "knapsack result: "<<best_v << endl;
-	/*cout << "copias result: ";
+	
+	cout << "copias result: ";
 	for (int i = 0; i < m.size(); i++)
-		cout << x[i]<<" ";
-	cout << endl;*/
+		cout << sol[i]<<" ";
+	cout << endl;
 }
 
 void imprimir(double resul,double tiempo,const vector<int> copias) {
