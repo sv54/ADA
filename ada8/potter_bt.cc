@@ -86,6 +86,13 @@ double value(const vector<double>& v, const vector<unsigned>& x) {
 	return r;
 }
 
+double add_rest(const vector<double>& v, const vector<unsigned>& m,size_t k) {
+	double res = 0.0;
+	for (size_t i = k; i < v.size(); i++)
+		res += v[i]*m[i];
+	return res;
+}
+
 void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<double>&w, double W,
 	size_t k,vector<unsigned>&x, double& best_v, double& acc_w, double& acc_v) {
 	
@@ -105,7 +112,8 @@ void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<dou
 		x[k] = j;
 		double present_w = acc_w + x[k] * w[k];
 		double present_v = acc_v + x[k] * v[k];
-		if (present_w<= W)
+		if (present_w<= W &&
+			present_v + add_rest(v,m,k+1)>best_v)
 			knapsack(v,m, w, W, k + 1, x, best_v, present_w, present_v);
 	}
 }
