@@ -155,7 +155,8 @@ vector<double> knapsack_W(
 
 
 double knapsack_c(const vector<double>& v, // values
-				const vector<double>& w, // weights
+				const vector<double>& w,// weights
+			const vector<unsigned>& m,
 				double W) {
 	vector<unsigned> idx(w.size()); // objects sorted by value density
 	for (unsigned i = 0; i < idx.size(); i++) idx[i] = i;
@@ -204,12 +205,12 @@ void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<dou
 		return;
 	}
 	
-	for (unsigned j = 0; j < m[k]; j++) {
+	for (unsigned j = 0; j <= m[k]; j++) {
 		x[k] = j;
 		double present_w = acc_w + x[k] * w[k];
 		double present_v = acc_v + x[k] * v[k];
 		if (present_w<= W &&
-			present_v + knapsack_c(v,w,W-present_w)>best_v)
+			present_v +knapsack_c(v,w,m,W-present_w)>best_v)
 			knapsack(v,m, w, W, k + 1, x, best_v, present_w, present_v);
 	}
 	
