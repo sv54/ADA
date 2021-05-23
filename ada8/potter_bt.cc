@@ -4,6 +4,7 @@
 #include<fstream>
 #include<sstream>
 #include<algorithm>
+#include<numeric>
 
 using namespace std;
 
@@ -186,9 +187,10 @@ double add_rest(const vector<double>& v, const vector<unsigned>& m,size_t k) {
 	return res;
 }
 
-void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<double>&w, double W,
-	size_t k,vector<unsigned>&x, double& best_v, double& acc_w, double& acc_v) {
-	
+void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<double>& w, double W,
+	size_t k, vector<unsigned>& x, double& best_v, double& acc_w, double& acc_v) {
+
+
 	if (k == x.size()) {
 		best_v = max(best_v, acc_v);
 		/*
@@ -201,22 +203,42 @@ void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<dou
 		}*/ //si queremos saber la solucion
 		return;
 	}
+	
 	for (unsigned j = 0; j < m[k]; j++) {
 		x[k] = j;
 		double present_w = acc_w + x[k] * w[k];
 		double present_v = acc_v + x[k] * v[k];
 		if (present_w<= W &&
-			present_v + knapsack_c(v,w,W)>best_v)
+			present_v + knapsack_c(v,w,W-present_w)>best_v)
 			knapsack(v,m, w, W, k + 1, x, best_v, present_w, present_v);
 	}
+	
 }
 
 void knapsack(const vector<double>& v,const vector<unsigned>m, const vector<double>& w, double W){
 	vector<unsigned>sol(v.size());
 	vector<unsigned> x(w.size());
+
+	vector<size_t> idx(v.size()); // index vector
+	iota(begin(idx), end(idx), 0);
+	sort(begin(idx), end(idx),
+		[&v, &w](size_t i, size_t j) {
+			return v[i] / w[i] > v[j] / w[j];
+		}
+	);
+	vector<double> s_v(v.size()), s_w(w.size());
+
+	for (size_t i = 0; i < v.size(); i++) {
+		s_v[i] = v[idx[i]]; // sorted values
+		s_w[i] = w[idx[i]]; // sorted weights
+
+	}
+
+
 	double auxCeroDouble = 0;
-	double best_v = voraz(v.size(),W,w,v,m);
-	knapsack(v,m, w, W, 0, x, best_v, auxCeroDouble, auxCeroDouble);
+	double best_v = voraz(v.size(),W,s_w,s_v,m);
+	cout << "voraz result: "<<best_v << endl;
+	knapsack(s_v,m, s_w, W, 0, x, best_v, auxCeroDouble, auxCeroDouble);
 	cout << "knapsack result: "<<best_v << endl;
 	
 	cout << "copias result: " << sol;
