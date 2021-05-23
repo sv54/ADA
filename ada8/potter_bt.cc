@@ -71,6 +71,41 @@ bool leerFichero(string nombre, int& n, double& T, vector<double>& t, vector<dou
 	return abierto;
 }
 
+double voraz(int n, double T, const vector<double>& t, const vector<double>& v, const vector<unsigned>& m){//, double& tiempo) {
+	vector <double> vt(n);
+
+	for (int i = 0; i < n; i++) {
+		vt[i] = i;//
+	}
+
+	sort(vt.begin(), vt.end(), [&v, &t](size_t x, size_t y) {
+		return v[x] / t[x] > v[y] / t[y]; });
+
+	double total = 0;
+	for (auto i : vt) {
+		for (int j = m[i]; j > 0; j--) {
+
+			if (t[i] * j <= T) {
+				total += j * v[i];
+				//copias[i] = copias[i] + j;
+				//tiempo += t[i] * j;
+				T -= t[i] * j;
+				j = j - j;
+				i++;
+			}
+		}
+	}
+
+	return total;
+}
+
+ostream& operator<<(ostream& os, const vector<unsigned>& vect) {
+	for (unsigned i = 0; i < vect.size(); i++) {
+		os << vect[i] << " ";
+	}
+	return os;
+}
+
 double weight(const vector<double>& w, size_t k, const vector<unsigned>& x) {
 	double acc_w = 0.0;
 	for (size_t i = 0; i < k; i++)
@@ -85,6 +120,8 @@ double value(const vector<double>& v, const vector<unsigned>& x) {
 	}
 	return r;
 }
+
+
 
 double add_rest(const vector<double>& v, const vector<unsigned>& m,size_t k) {
 	double res = 0.0;
@@ -122,13 +159,13 @@ void knapsack(const vector<double>& v,const vector<unsigned>m, const vector<doub
 	vector<unsigned>sol(v.size());
 	vector<unsigned> x(w.size());
 	double auxCeroDouble = 0;
-	double best_v = numeric_limits<double>::lowest();
+	double best_v = voraz(v.size(),W,w,v,m);
 	knapsack(v,m, w, W, 0, x, best_v, auxCeroDouble, auxCeroDouble);
 	cout << "knapsack result: "<<best_v << endl;
 	
-	cout << "copias result: ";
-	for (int i = 0; i < m.size(); i++)
-		cout << sol[i]<<" ";
+	cout << "copias result: " << sol;
+	/*for (int i = 0; i < m.size(); i++)
+		cout << sol[i]<<" ";*/
 	cout << endl;
 }
 
@@ -186,7 +223,8 @@ int main(int argc, char *argv[]){
 		vector<double> v,t;//tiempos
 		vector<unsigned> m; // maximo, valor
 		
-		nombreFichero = "potter_n04r.def";
+
+		nombreFichero = "potter_n15.def";
 
 		if(!leerFichero(nombreFichero,n,T,t,v,m))
 			return 0;
@@ -194,7 +232,10 @@ int main(int argc, char *argv[]){
 		double tiempoTotal = 0;
 		double resul = -1;
 		//feasible(n,m,t,T);
+		clock_t start = clock();
 		knapsack(v,m, t, T);
+		clock_t end = clock();
+		cout << (double(end - start) / ((clock_t)1000)) << "s" << endl;
 		//resul = optima(n, T, t, v, m,copias,tiempoTotal);
 		imprimir(resul,tiempoTotal,copias);
 	}
