@@ -87,7 +87,7 @@ double value(const vector<double>& v, const vector<unsigned>& x) {
 }
 
 void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<double>&w, double W,
-	size_t k,vector<unsigned>&x, double& best_v, double& acc_w) {
+	size_t k,vector<unsigned>&x, double& best_v, double& acc_w, double& acc_v) {
 	
 	if (k == x.size()) {
 		best_v = max(best_v, value(v, x));
@@ -104,17 +104,18 @@ void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<dou
 	for (unsigned j = 0; j < m[k]; j++) {
 		x[k] = j;
 		double present_w = acc_w + x[k] * w[k];
+		double present_v = acc_v + x[k] * v[k];
 		if (present_w<= W)
-			knapsack(v,m, w, W, k + 1, x, best_v, present_w);
+			knapsack(v,m, w, W, k + 1, x, best_v, present_w, present_v);
 	}
 }
 
 void knapsack(const vector<double>& v,const vector<unsigned>m, const vector<double>& w, double W){
 	vector<unsigned>sol(v.size());
 	vector<unsigned> x(w.size());
-	double auxDouble = 0;
+	double auxCeroDouble = 0;
 	double best_v = numeric_limits<double>::lowest();
-	knapsack(v,m, w, W, 0, x, best_v, auxDouble);
+	knapsack(v,m, w, W, 0, x, best_v, auxCeroDouble, auxCeroDouble);
 	cout << "knapsack result: "<<best_v << endl;
 	
 	cout << "copias result: ";
