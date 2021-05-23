@@ -121,6 +121,62 @@ double value(const vector<double>& v, const vector<unsigned>& x) {
 	return r;
 }
 
+vector<double> knapsack_W(
+	const vector<double>& v, // values
+	const vector<double>& w, // weights
+	double W // knapsack weight limit
+) {
+	vector<unsigned> idx(w.size());
+	for (unsigned i = 0; i < idx.size(); i++) idx[i] = i;
+	sort(idx.begin(), idx.end(), [v, w](unsigned x, unsigned y) {
+		return v[x] / w[x] > v[y] / w[y]; });
+
+	vector<double> x(w.size());
+	double acc_v = 0.0;
+	for (unsigned i = 0; i < idx.size(); i++) {
+		if (w[idx[i]] > W) {
+			acc_v += W / w[idx[i]] * v[idx[i]];
+			x[idx[i]] = W / w[idx[i]];
+			W = 0.0;
+
+		}
+		else {
+			acc_v += v[idx[i]];
+			W -= w[idx[i]];
+			x[idx[i]] = 1.0;
+
+		}
+
+	}
+	return x;
+
+}
+
+
+double knapsack_c(const vector<double>& v, // values
+				const vector<double>& w, // weights
+				double W) {
+	vector<unsigned> idx(w.size()); // objects sorted by value density
+	for (unsigned i = 0; i < idx.size(); i++) idx[i] = i;
+
+	sort(idx.begin(), idx.end(),
+		[v, w](unsigned x, unsigned y) {
+			return v[x] / w[x] > v[y] / w[y];
+		}
+	);
+	double acc_v = 0.0;
+	for (unsigned i = 0; i < idx.size(); i++) {
+		if (w[idx[i]] > W) {
+			acc_v += W / w[idx[i]] * v[idx[i]];
+			break;
+
+		}
+		acc_v += v[idx[i]];
+		W -= w[idx[i]];
+
+	}
+	return acc_v;
+}
 
 
 double add_rest(const vector<double>& v, const vector<unsigned>& m,size_t k) {
@@ -150,7 +206,7 @@ void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<dou
 		double present_w = acc_w + x[k] * w[k];
 		double present_v = acc_v + x[k] * v[k];
 		if (present_w<= W &&
-			present_v + add_rest(v,m,k+1)>best_v)
+			present_v + knapsack_c(v,w,W)>best_v)
 			knapsack(v,m, w, W, k + 1, x, best_v, present_w, present_v);
 	}
 }
