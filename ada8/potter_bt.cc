@@ -90,7 +90,7 @@ void knapsack(const vector<double>& v, const vector<unsigned>m, const vector<dou
 	size_t k,vector<unsigned>&x, double& best_v, double& acc_w, double& acc_v) {
 	
 	if (k == x.size()) {
-		best_v = max(best_v, value(v, x));
+		best_v = max(best_v, acc_v);
 		/*
 		if (weight(w, k, x) <= W) {
 			double actual_v = value(v, x);
